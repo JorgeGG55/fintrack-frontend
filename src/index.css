@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+main {
+  -webkit-overflow-scrolling: touch;
+}
+img, svg {
+  display: block;
+}
+table {
+  table-layout: fixed;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+.animate-shake {
+  animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+
