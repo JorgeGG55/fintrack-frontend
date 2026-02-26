@@ -15,7 +15,7 @@ const MonthlyEvolutionChart = memo(({ data }) => {
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
                         <span className="text-gray-600">{entry.name}:</span>
                         <span className="font-semibold">
-                            €{Math.abs(entry.value).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            ${Math.abs(entry.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </span>
                     </div>
                 ))}
@@ -38,7 +38,7 @@ const MonthlyEvolutionChart = memo(({ data }) => {
                     <LineChart width={width} height={height + LEGEND_HEIGHT} data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '11px' }} />
-                        <YAxis stroke="#6b7280" style={{ fontSize: '11px' }} tickFormatter={(v) => `€${v}`} width={45} />
+                        <YAxis stroke="#6b7280" style={{ fontSize: '11px' }} tickFormatter={(v) => `$${v}`} width={45} />
                         <Tooltip content={CustomTooltip} />
                         <Legend
                             verticalAlign="bottom"

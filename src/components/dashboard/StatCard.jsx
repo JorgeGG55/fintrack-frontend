@@ -23,7 +23,7 @@ const StatCard = ({ title, amount, percentage, icon: Icon, color }) => {
             <div>
                 <p className="text-xs lg:text-sm text-gray-600 mb-1">{title}</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">
-                    €{amount.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">This month</p>
             </div>

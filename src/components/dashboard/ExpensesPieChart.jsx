@@ -19,9 +19,9 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const ExpensesPieChart = memo(({ data, onPeriodChange }) => {
     const now = new Date();
-    const thisMonth = capitalize(now.toLocaleString('es-ES', { month: 'long' }));
-    const lastMonth = capitalize(new Date(now.getFullYear(), now.getMonth() - 1, 1).toLocaleString('es-ES', { month: 'long' }));
-    const twoMonthsAgo = capitalize(new Date(now.getFullYear(), now.getMonth() - 2, 1).toLocaleString('es-ES', { month: 'long' }));
+    const thisMonth = capitalize(now.toLocaleString('en-US', { month: 'long' }));
+    const lastMonth = capitalize(new Date(now.getFullYear(), now.getMonth() - 1, 1).toLocaleString('en-US', { month: 'long' }));
+    const twoMonthsAgo = capitalize(new Date(now.getFullYear(), now.getMonth() - 2, 1).toLocaleString('en-US', { month: 'long' }));
 
     const chartData = useMemo(
         () => data.map(item => ({
@@ -38,7 +38,7 @@ const ExpensesPieChart = memo(({ data, onPeriodChange }) => {
             <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
                 <p className="font-semibold text-gray-900">{payload[0].name}</p>
                 <p className="text-sm text-gray-600">
-                    €{payload[0].value.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                    ${payload[0].value.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </p>
                 <p className="text-xs text-gray-500">{payload[0].payload.percentage}%</p>
             </div>

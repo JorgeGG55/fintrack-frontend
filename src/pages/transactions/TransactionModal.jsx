@@ -4,9 +4,9 @@ const TransactionFiltersModal = ({ isOpen, onClose, filters, setFilters, categor
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center h-full p-4">
             <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-            <div className="relative bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 z-10 shadow-xl">
+            <div className="relative bg-white w-full sm:max-w-md rounded-2xl sm:rounded-2xl p-6 z-10 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-bold text-gray-900">Filtros</h3>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -82,7 +82,7 @@ const TransactionFiltersModal = ({ isOpen, onClose, filters, setFilters, categor
                     </button>
                     <button
                         onClick={onClose}
-                        className="flex-1 py-2.5 px-4 text-sm bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
+                        className="flex-1 py-2.5 px-4 text-sm border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                         Aplicar
                     </button>

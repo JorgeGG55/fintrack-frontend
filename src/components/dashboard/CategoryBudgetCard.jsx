@@ -23,7 +23,7 @@ const CategoryBudgetCard = ({ category, spent, budget, icon, color }) => {
                 <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-gray-900 text-sm lg:text-base truncate">{category}</h4>
                     <p className="text-lg lg:text-2xl font-bold text-gray-900">
-                        €{spent.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                        ${spent.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </p>
                 </div>
             </div>
@@ -34,7 +34,7 @@ const CategoryBudgetCard = ({ category, spent, budget, icon, color }) => {
                         {percentage.toFixed(0)}% of budget
                     </span>
                     <span className="text-gray-500">
-                        €{remaining.toFixed(2)} left
+                        ${remaining.toFixed(2)} left
                     </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-1.5 lg:h-2">

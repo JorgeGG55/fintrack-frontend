@@ -10,15 +10,12 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        // Verificar si hay usuario en localStorage
         const token = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
-
         if (token && savedUser) {
             setUser(JSON.parse(savedUser));
             setIsAuthenticated(true);
         }
-
         setLoading(false);
     }, []);
 
@@ -27,10 +24,10 @@ export const AuthProvider = ({ children }) => {
             const data = await authService.login(credentials);
             setUser(data.user);
             setIsAuthenticated(true);
-            toast.success(`¡Bienvenido, ${data.user.name}!`);
+            toast.success(`Welcome back, ${data.user.name}!`);
             return data;
         } catch (error) {
-            const message = error.response?.data?.error || 'Error al iniciar sesión';
+            const message = error.response?.data?.error || 'Error signing in';
             toast.error(message);
             throw error;
         }
@@ -41,10 +38,10 @@ export const AuthProvider = ({ children }) => {
             const data = await authService.register(userData);
             setUser(data.user);
             setIsAuthenticated(true);
-            toast.success(`¡Cuenta creada! Bienvenido, ${data.user.name}!`);
+            toast.success(`Account created! Welcome, ${data.user.name}!`);
             return data;
         } catch (error) {
-            const message = error.response?.data?.error || 'Error al registrarse';
+            const message = error.response?.data?.error || 'Error creating account';
             toast.error(message);
             throw error;
         }
@@ -54,25 +51,16 @@ export const AuthProvider = ({ children }) => {
         authService.logout();
         setUser(null);
         setIsAuthenticated(false);
-        toast.success('Sesión cerrada');
+        toast.success('Signed out successfully');
     };
 
-    const value = {
-        user,
-        loading,
-        isAuthenticated,
-        login,
-        register,
-        logout,
-    };
+    const value = { user, loading, isAuthenticated, login, register, logout };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth debe usarse dentro de AuthProvider');
-    }
+    if (!context) throw new Error('useAuth must be used within AuthProvider');
     return context;
 };

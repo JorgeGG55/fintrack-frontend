@@ -71,7 +71,7 @@ const SettingsPage = () => {
                             {
                                 icon: Shield, label: 'Member since',
                                 value: user?.createdAt
-                                    ? new Date(user.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+                                    ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                                     : 'N/A'
                             },
                         ].map(({ icon: Icon, label, value }) => (
@@ -167,24 +167,28 @@ const SettingsPage = () => {
                                     className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm"
                                 />
                             </div>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => { setShowDeleteConfirm(false); setDeletePassword(''); }}
-                                    className="flex-1 btn btn-secondary text-sm"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleDeleteAccount}
-                                    disabled={deleteLoading || !deletePassword}
-                                    className="flex-1 btn btn-primary flex items-center justify-center gap-2 text-sm disabled:opacity-50"
-                                >
-                                    {deleteLoading ? (
-                                        <><Loader2 className="h-4 w-4 animate-spin" />Deleting...</>
-                                    ) : (
-                                        <><Trash2 className="h-4 w-4" />Confirm Delete</>
-                                    )}
-                                </button>
+                            <div className="flex items-center justify-around gap-3">
+                                <div>
+                                    <button
+                                        onClick={() => { setShowDeleteConfirm(false); setDeletePassword(''); }}
+                                        className="flex-1 btn btn-secondary text-sm cursor-pointer"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={handleDeleteAccount}
+                                        disabled={deleteLoading || !deletePassword}
+                                        className="flex-1 btn btn-primary flex items-center justify-center gap-2 text-sm cursor-pointer disabled:opacity-50"
+                                    >
+                                        {deleteLoading ? (
+                                            <><Loader2 className="h-4 w-4 animate-spin" />Deleting...</>
+                                        ) : (
+                                            <><Trash2 className="h-4 w-4" />Confirm Delete</>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}

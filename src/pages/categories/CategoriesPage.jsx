@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { categoryService } from '../../services';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
 
 const CategoriesPage = () => {
@@ -29,13 +30,7 @@ const CategoriesPage = () => {
     const expenseCount = categories.filter(c => c.type === 'expense' || c.type === 'both').length;
     const incomeCount = categories.filter(c => c.type === 'income' || c.type === 'both').length;
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-96">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
-            </div>
-        );
-    }
+    if (loading) return <LoadingSpinner />;
 
     return (
         <div className="space-y-4 lg:space-y-6">

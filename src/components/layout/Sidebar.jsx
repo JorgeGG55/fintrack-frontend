@@ -73,7 +73,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
                                 to={item.path}
                                 onClick={handleNavClick}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${isActive
+                                    `flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg transition-all ${isActive
                                         ? 'bg-primary-50 text-primary-600 font-medium'
                                         : 'text-gray-700 hover:bg-gray-50'
                                     }`

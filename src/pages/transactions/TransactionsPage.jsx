@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import TransactionFiltersModal from './TransactionModal';
+import GeneratingState from '../../components/ui/GeneratingState';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -12,7 +14,9 @@ const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isGenerating, setIsGenerating] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(
+        new URLSearchParams(window.location.search).has('generating')
+    );
     const [showFiltersModal, setShowFiltersModal] = useState(false);
     const [filters, setFilters] = useState({ search: '', category: '', type: '', startDate: '', endDate: '' });
     const [dateSort, setDateSort] = useState('desc');
@@ -115,41 +119,10 @@ const TransactionsPage = () => {
         return colors[category] || 'bg-gray-50 text-gray-600';
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-96">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-            </div>
-        );
-    }
+    if (loading) return <LoadingSpinner />;
 
     if (isGenerating) {
-        return (
-            <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 shrink-0"></div>
-                    <div>
-                        <p className="font-medium text-blue-900 text-sm lg:text-base">Generando tus transacciones de ejemplo...</p>
-                        <p className="text-xs lg:text-sm text-blue-600">Esto puede tardar hasta un minuto. La página se actualizará sola.</p>
-                    </div>
-                </div>
-                <div className="bg-white rounded-xl p-4 animate-pulse space-y-3">
-                    {[1, 2, 3].map(i => <div key={i} className="h-8 bg-gray-100 rounded-lg"></div>)}
-                </div>
-                <div className="bg-white rounded-xl p-4 space-y-3">
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                        <div key={i} className="flex items-center gap-3 animate-pulse">
-                            <div className="h-9 w-9 bg-gray-200 rounded-lg shrink-0"></div>
-                            <div className="flex-1 space-y-1.5">
-                                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                                <div className="h-3 bg-gray-100 rounded w-1/3"></div>
-                            </div>
-                            <div className="h-4 w-16 bg-gray-200 rounded"></div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
+        return <GeneratingState page="transactions" message="Generating your sample transactions..." />;
     }
 
     return (
@@ -258,7 +231,7 @@ const TransactionsPage = () => {
                                     </div>
                                     <div className="text-right shrink-0">
                                         <p className={`text-sm font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                            {t.type === 'income' ? '+' : '-'}€{Math.abs(t.amount).toFixed(2)}
+                                            {t.type === 'income' ? '+' : '-'}${Math.abs(t.amount).toFixed(2)}
                                         </p>
                                         <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${t.type === 'income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                             {t.type}
@@ -308,7 +281,7 @@ const TransactionsPage = () => {
                                             </td>
                                             <td className="py-3 text-right font-semibold">
                                                 <span className={t.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-                                                    {t.type === 'income' ? '+' : '-'}€{Math.abs(t.amount).toFixed(2)}
+                                                    {t.type === 'income' ? '+' : '-'}${Math.abs(t.amount).toFixed(2)}
                                                 </span>
                                             </td>
                                         </tr>
