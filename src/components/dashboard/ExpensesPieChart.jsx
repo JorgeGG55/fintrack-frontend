@@ -3,26 +3,12 @@ import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
 import ChartWrapper from './ChartWrapper';
 
 const COLORS = {
-    'Food & Dining': '#ef4444',
-    'Transportation': '#f59e0b',
-    'Entertainment': '#ec4899',
-    'Shopping': '#8b5cf6',
-    'Bills & Utilities': '#10b981',
-    'Healthcare': '#06b6d4',
-    'Gym & Sports': '#3b82f6',
-    'Education': '#6366f1',
-    'Travel': '#14b8a6',
-    'Other': '#6b7280',
+    'Food & Dining': '#ef4444', 'Transportation': '#f59e0b', 'Entertainment': '#ec4899',
+    'Shopping': '#8b5cf6', 'Bills & Utilities': '#10b981', 'Healthcare': '#06b6d4',
+    'Gym & Sports': '#3b82f6', 'Education': '#6366f1', 'Travel': '#14b8a6', 'Other': '#6b7280',
 };
 
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-const ExpensesPieChart = memo(({ data, onPeriodChange }) => {
-    const now = new Date();
-    const thisMonth = capitalize(now.toLocaleString('en-US', { month: 'long' }));
-    const lastMonth = capitalize(new Date(now.getFullYear(), now.getMonth() - 1, 1).toLocaleString('en-US', { month: 'long' }));
-    const twoMonthsAgo = capitalize(new Date(now.getFullYear(), now.getMonth() - 2, 1).toLocaleString('en-US', { month: 'long' }));
-
+const ExpensesPieChart = memo(({ data, onPeriodChange, availableMonths = [], selectedPeriod }) => {
     const chartData = useMemo(
         () => data.map(item => ({
             name: item._id || item.name,
@@ -31,6 +17,15 @@ const ExpensesPieChart = memo(({ data, onPeriodChange }) => {
         })),
         [data]
     );
+
+    const handlePeriodChange = useCallback(
+        (e) => onPeriodChange(e.target.value),
+        [onPeriodChange]
+    );
+
+    const selectedKey = selectedPeriod
+        ? `${selectedPeriod.year}-${String(selectedPeriod.month).padStart(2, '0')}`
+        : '';
 
     const CustomTooltip = useCallback(({ active, payload }) => {
         if (!active || !payload?.length) return null;
@@ -45,28 +40,44 @@ const ExpensesPieChart = memo(({ data, onPeriodChange }) => {
         );
     }, []);
 
-    const handlePeriodChange = useCallback(
-        (e) => onPeriodChange(e.target.value),
-        [onPeriodChange]
-    );
-
-    // Calcular altura de leyenda según nº de categorías (2 columnas, ~20px por fila)
     const legendRows = Math.ceil(chartData.length / 2);
     const legendHeight = legendRows * 22 + 10;
 
+    const header = (
+        <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base lg:text-lg font-bold text-gray-900">Expenses by Category</h3>
+            <select
+                value={selectedKey}
+                onChange={handlePeriodChange}
+                className="text-xs lg:text-sm border border-gray-300 rounded-lg px-2 py-1.5 lg:px-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+                {availableMonths.map(({ month, year }) => {
+                    const key = `${year}-${String(month).padStart(2, '0')}`;
+                    return (
+                        <option key={key} value={key}>
+                            {new Date(year, month - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+                        </option>
+                    );
+                })}
+            </select>
+        </div>
+    );
+
+    // Sin datos para el periodo seleccionado
+    if (!chartData.length) {
+        return (
+            <div className="bg-white rounded-xl p-4 lg:p-6 border border-gray-100">
+                {header}
+                <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
+                    No expenses recorded for this period
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white rounded-xl p-4 lg:p-6 border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base lg:text-lg font-bold text-gray-900">Expenses by Category</h3>
-                <select
-                    onChange={handlePeriodChange}
-                    className="text-xs lg:text-sm border border-gray-300 rounded-lg px-2 py-1.5 lg:px-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                >
-                    <option value="this-month">{thisMonth}</option>
-                    <option value="last-month">{lastMonth}</option>
-                    <option value="last-3-months">{twoMonthsAgo}</option>
-                </select>
-            </div>
+            {header}
             <ChartWrapper heightRatio={0.65} maxHeight={260}>
                 {(width, height) => (
                     <PieChart width={width} height={height + legendHeight}>

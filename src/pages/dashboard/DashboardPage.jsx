@@ -10,18 +10,13 @@ import GeneratingState from '../../components/ui/GeneratingState';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
 
-
 const DashboardPage = () => {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState(null);
     const [transactions, setTransactions] = useState([]);
+    const [availableMonths, setAvailableMonths] = useState([]);
     const [isGenerating, setIsGenerating] = useState(false);
-
-    const now = new Date();
-    const [pieChartPeriod, setPieChartPeriod] = useState({
-        month: now.getMonth() + 1,
-        year: now.getFullYear(),
-    });
+    const [pieChartPeriod, setPieChartPeriod] = useState(null);
 
     useEffect(() => { fetchDashboardData(); }, []);
 
@@ -43,21 +38,38 @@ const DashboardPage = () => {
     }, [isGenerating]);
 
     useEffect(() => {
-        if (stats) fetchPieChartData();
+        if (stats && pieChartPeriod) fetchPieChartData();
     }, [pieChartPeriod]);
 
     const fetchDashboardData = async () => {
         try {
             setLoading(true);
-            const [statsData, transactionsData] = await Promise.all([
+            const [statsData, transactionsData, allTransactionsData] = await Promise.all([
                 transactionService.getStats(),
                 transactionService.getAll({ limit: 10, page: 1 }),
+                transactionService.getAll({ limit: 1000 }),
             ]);
+
             setStats(statsData.data);
             setTransactions(transactionsData.data);
-            if (!transactionsData.data || transactionsData.data.length === 0) {
+
+            if (!transactionsData.data?.length) {
                 setIsGenerating(true);
+                return;
             }
+
+            const monthsMap = new Map();
+            allTransactionsData.data.forEach(t => {
+                const d = new Date(t.date);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                if (!monthsMap.has(key)) monthsMap.set(key, { month: d.getMonth() + 1, year: d.getFullYear() });
+            });
+            const months = [...monthsMap.values()].sort((a, b) =>
+                b.year !== a.year ? b.year - a.year : b.month - a.month
+            );
+            setAvailableMonths(months);
+            if (months.length > 0) setPieChartPeriod(months[0]);
+
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             toast.error('Error loading dashboard data');
@@ -80,34 +92,21 @@ const DashboardPage = () => {
     };
 
     const handlePeriodChange = (value) => {
-        const now = new Date();
-        switch (value) {
-            case 'this-month':
-                setPieChartPeriod({ month: now.getMonth() + 1, year: now.getFullYear() });
-                break;
-            case 'last-month':
-                const lm = new Date(now); lm.setMonth(lm.getMonth() - 1);
-                setPieChartPeriod({ month: lm.getMonth() + 1, year: lm.getFullYear() });
-                break;
-            case 'last-3-months':
-                const tm = new Date(now); tm.setMonth(tm.getMonth() - 2);
-                setPieChartPeriod({ month: tm.getMonth() + 1, year: tm.getFullYear() });
-                break;
-        }
+        const [year, month] = value.split('-').map(Number);
+        setPieChartPeriod({ month, year });
     };
 
     if (loading) return <LoadingSpinner />;
-
-    if (isGenerating || !stats) {
-        return <GeneratingState page="dashboard" message="Generating your demo data..." />;
-    }
+    if (isGenerating || !stats) return <GeneratingState page="dashboard" message="Generating your demo data..." />;
 
     const expensesData = stats.byCategory
         .filter(cat => cat.total < 0)
         .map(cat => ({
             ...cat,
             total: Math.abs(cat.total),
-            percentage: ((Math.abs(cat.total) / stats.period.expenses) * 100).toFixed(1),
+            percentage: stats.period.expenses
+                ? ((Math.abs(cat.total) / stats.period.expenses) * 100).toFixed(1)
+                : '0',
         }));
 
     const monthlyData = [
@@ -146,7 +145,12 @@ const DashboardPage = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                <ExpensesPieChart data={expensesData} onPeriodChange={handlePeriodChange} />
+                <ExpensesPieChart
+                    data={expensesData}
+                    onPeriodChange={handlePeriodChange}
+                    availableMonths={availableMonths}
+                    selectedPeriod={pieChartPeriod}
+                />
                 <MonthlyEvolutionChart data={monthlyData} />
             </div>
 
